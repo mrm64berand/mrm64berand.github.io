@@ -1044,10 +1044,10 @@
           <input class="code-input" id="clientDevice" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX" />
           <div class="pin-err" id="genErr"></div>
           <div class="device-code" id="genOutCode">—</div>
-          <p id="genMsg" style="margin:8px 0 0;font-size:.88rem;color:var(--ink-soft)"></p>
+          <p id="ownGenMsg" style="margin:8px 0 0;font-size:.88rem;color:var(--ink-soft)"></p>
           <div class="pin-actions">
-            <button class="finish-btn" id="genMake" type="button" data-i18n="own_make">ساختن کد</button>
-            <button class="ghost-btn" id="genCopy" type="button" data-i18n="own_copyb">کپی کد</button>
+            <button class="finish-btn" id="ownGenMake" type="button" data-i18n="own_make">ساختن کد</button>
+            <button class="ghost-btn" id="ownGenCopy" type="button" data-i18n="own_copyb">کپی کد</button>
             <button class="ghost-btn" id="ownerClose" type="button" data-i18n="own_close">بستن</button>
           </div>
           <label for="clientName" data-i18n="own_name_label">نام مشتری (برای سابقه)</label>
@@ -2426,14 +2426,14 @@
     var ownerPin = document.getElementById("ownerPin");
     var ownerErr = document.getElementById("ownerErr");
     var genOutCode = document.getElementById("genOutCode");
-    var genMsg = document.getElementById("genMsg");
+    var ownMsg = document.getElementById("ownGenMsg");
     var genErr = document.getElementById("genErr");
     var lastGen = "";
     function openOwner() {
       ownerPinView.style.display = "";
       ownerGenView.style.display = "none";
       ownerPin.value = ""; ownerErr.textContent = "";
-      genErr.textContent = ""; genMsg.textContent = "";
+      genErr.textContent = ""; ownMsg.textContent = "";
       genOutCode.textContent = "—"; lastGen = "";
       var po = document.getElementById("personalOut"); if (po) po.textContent = "—";
       var pm = document.getElementById("personalMsg"); if (pm) pm.textContent = "";
@@ -2462,9 +2462,9 @@
     ownerPin.addEventListener("keydown", function (e) {
       if (e.key === "Enter") document.getElementById("ownerGo").click();
     });
-    document.getElementById("genMake").addEventListener("click", function () {
+    document.getElementById("ownGenMake").addEventListener("click", function () {
       var dev = normCode(document.getElementById("clientDevice").value);
-      genErr.textContent = ""; genMsg.textContent = "";
+      genErr.textContent = ""; ownMsg.textContent = "";
       if (dev.length !== 10) {
         genErr.textContent = L("کد گوشی مشتری باید ۱۰ حرف/عدد باشد؛ همان کدی که روی گوشی مشتری نشان داده می‌شود.", "The client's device code must be 10 letters/digits; the code shown on the client's phone.");
         genOutCode.textContent = "—"; lastGen = "";
@@ -2472,14 +2472,14 @@
       }
       lastGen = groupCode(activationFor(dev), 5);
       genOutCode.textContent = lastGen;
-      genMsg.textContent = L("این کد را برای مشتری بفرست؛ فقط روی همان گوشی کار می‌کند.", "Send this code to the client; it works only on that phone.");
+      ownMsg.textContent = L("این کد را برای مشتری بفرست؛ فقط روی همان گوشی کار می‌کند.", "Send this code to the client; it works only on that phone.");
     });
-    document.getElementById("genCopy").addEventListener("click", function () {
+    document.getElementById("ownGenCopy").addEventListener("click", function () {
       if (!lastGen) { genErr.textContent = L("اول کد را بساز، بعد کپی کن.", "Make the code first, then copy it."); return; }
-      function done() { genMsg.textContent = L("کد فعال‌سازی کپی شد.", "Activation code copied."); }
+      function done() { ownMsg.textContent = L("کد فعال‌سازی کپی شد.", "Activation code copied."); }
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(lastGen).then(done, function () { genMsg.textContent = L("کپی نشد؛ کد را دستی بفرست.", "Copy failed; send the code manually."); });
-      } else { genMsg.textContent = L("کد را دستی برای مشتری بفرست.", "Send the code to the client manually."); }
+        navigator.clipboard.writeText(lastGen).then(done, function () { ownMsg.textContent = L("کپی نشد؛ کد را دستی بفرست.", "Copy failed; send the code manually."); });
+      } else { ownMsg.textContent = L("کد را دستی برای مشتری بفرست.", "Send the code to the client manually."); }
     });
 
     /* ================= client history (owner only, stays on this phone) ================= */
@@ -2516,7 +2516,7 @@
           lastGen = groupCode(activationFor(c.device), 5);
           genOutCode.textContent = lastGen;
           genErr.textContent = "";
-          genMsg.textContent = L("کد فعال‌سازی این مشتری دوباره نشان داده شد؛ می‌توانی کپی‌اش کنی.", "This client's activation code is shown again; you can copy it.");
+          ownMsg.textContent = L("کد فعال‌سازی این مشتری دوباره نشان داده شد؛ می‌توانی کپی‌اش کنی.", "This client's activation code is shown again; you can copy it.");
         });
         var bDel = document.createElement("button");
         bDel.type = "button"; bDel.className = "ghost-btn"; bDel.textContent = L("حذف از سابقه", "Remove");
@@ -2532,7 +2532,7 @@
     document.getElementById("clientSave").addEventListener("click", function () {
       var name = document.getElementById("clientName").value.trim();
       var dev = normCode(document.getElementById("clientDevice").value);
-      genErr.textContent = ""; genMsg.textContent = "";
+      genErr.textContent = ""; ownMsg.textContent = "";
       if (!name) { genErr.textContent = L("اول نام مشتری را بنویس.", "Write the client's name first."); return; }
       if (dev.length !== 10) { genErr.textContent = L("کد گوشی مشتری باید ۱۰ حرف/عدد باشد؛ همان کدی که روی گوشی مشتری نشان داده می‌شود.", "The client's device code must be 10 letters/digits; the code shown on the client's phone."); return; }
       lastGen = groupCode(activationFor(dev), 5);
@@ -2540,7 +2540,7 @@
       state.clients.unshift({ name: name, device: dev, ts: Date.now() });
       save(); renderClients();
       document.getElementById("clientName").value = "";
-      genMsg.textContent = L("مشتری در سابقه ثبت شد و کد فعال‌سازی‌اش ساخته شد؛ کد را برایش بفرست.", "Client saved to the history and their activation code was made; send them the code.");
+      ownMsg.textContent = L("مشتری در سابقه ثبت شد و کد فعال‌سازی‌اش ساخته شد؛ کد را برایش بفرست.", "Client saved to the history and their activation code was made; send them the code.");
     });
 
     /* ================= personal edition: the client's name on this copy ====
@@ -3712,7 +3712,7 @@
     });
 
     /* ================= app version ================= */
-    document.getElementById("appVersion").textContent = L("نسخه ۱۶ — آبان ۱۴۰۵", "Version 16 — Nov 2026");
+    document.getElementById("appVersion").textContent = L("نسخه ۱۷ — آبان ۱۴۰۵", "Version 17 — Nov 2026");
 
     /* live language switch: re-render every dynamic part in the new language */
     function applyLangLive() {
@@ -3754,7 +3754,7 @@
       paintLockBtn();
       paintSettings();
       paintCustomer();
-      document.getElementById("appVersion").textContent = L("نسخه ۱۶ — آبان ۱۴۰۵", "Version 16 — Nov 2026");
+      document.getElementById("appVersion").textContent = L("نسخه ۱۷ — آبان ۱۴۰۵", "Version 17 — Nov 2026");
       try { paintTrialState(); } catch (e) {}
       if (lastReport) buildReport();
       refreshCards();
@@ -3795,7 +3795,7 @@
     } catch (e) {}
     </script>
     <script>
-    /* Install & upgrade wiring (version 16): registers the versioned
+    /* Install & upgrade wiring (version 17): registers the versioned
        service worker and drives the "Install & upgrade" panel near the
        top of the page. It never touches the app's localStorage keys,
        so activation, ticks and progress survive installing/updating. */

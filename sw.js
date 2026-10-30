@@ -1,11 +1,11 @@
-/* MRM64 anti-hacker app — service worker (version 16)
+/* MRM64 anti-hacker app — service worker (version 17)
    Job: let Chrome offer a real "Install app", and keep the app
    fresh. Pages are always fetched from the network first, so a
    newly published version replaces the old one by itself; the
    cache below is only an offline fallback. Activation codes and
    all progress live in localStorage under their own keys, which
    this worker never touches, so updating never wipes them. */
-var CACHE = "mrm64-antihacker-v16";
+var CACHE = "mrm64-antihacker-v17";
 
 self.addEventListener("install", function (e) {
   self.skipWaiting();
